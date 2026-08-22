@@ -155,6 +155,25 @@
     text-shadow: 3px 3px 0 var(--accent-bright);
   }
 
+  /* portrait and wordmark share a line, and stack on a narrow screen */
+  .crest {
+    display: flex; align-items: center;
+    gap: clamp(14px, 3vw, 22px);
+    flex-wrap: wrap;
+  }
+  .avatar {
+    width: clamp(72px, 14vw, 104px);
+    height: auto;
+    flex: none;
+    display: block;
+    border: var(--edge) solid var(--border);
+    box-shadow: var(--pop) var(--pop) 0 var(--shadow);
+    /* it IS pixel art: let the browser keep the pixels square rather than
+       smoothing them into the blur every other image on the page avoids */
+    image-rendering: pixelated;
+  }
+  .crest .cart { flex: 1 1 12ch; }
+
   .tag { margin: 0; max-width: 62ch; font-size: 1.06rem; color: var(--text-soft); }
 
   .stats { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
@@ -338,18 +357,14 @@
 <div class="wrap">
 
   <header class="box hero">
-    <h1 class="cart">NEW BARK MODS</h1>
+    <div class="crest">
+      <img class="avatar" src="avatar.png" width="96" height="96"
+           alt="Pixel-art portrait of jramiresbrito">
+      <h1 class="cart">NEW BARK MODS</h1>
+    </div>
     <p class="tag">
       Quality-of-life mods for <strong><a href="https://github.com/bryanthaboi/gen1recomp">Gen1Recomp</a></strong>, built one
-      annoyance at a time while replaying Pok&eacute;mon Gold. Each ships as a
-      <code>.zip</code> the launcher installs and updates on its own.
-    </p>
-    <p class="tag">
-      Some of the fixes go further upstream: I contribute to the engine itself,
-      and
-      <a href="https://github.com/bryanthaboi/gen1recomp/pull/1660">PR&nbsp;#1660</a>
-      shipped in <a href="https://github.com/bryanthaboi/gen1recomp/releases/tag/v0.2.19">v0.2.19</a>
-      &mdash; the seam that lets a mod tell one EXP message from six.
+      annoyance at a time while replaying Pok&eacute;mon Gold.
     </p>
     <div class="stats">
       <span class="stat" id="count">7 released</span>
