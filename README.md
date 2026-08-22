@@ -1,4 +1,4 @@
-# New Bark Mods
+# New Bark Town Mods
 
 The site at <https://jramiresbrito.github.io> that lists my Gen1Recomp mods.
 
