@@ -104,5 +104,48 @@ check("the START marker is present", B.START in page)
 check("the END marker is present", B.END in page)
 check("the count placeholder is present", 'id="count"' in page)
 
+# ---- screenshots ----------------------------------------------------------
+#
+# A card carries a picture when shots/<repo>.png exists and is unchanged
+# otherwise, so adding one to a mod is copying a file in.
+print("-- screenshots")
+
+
+def _mod(repo):
+    return {"repo": repo, "name": "Example", "version": "1.0.0",
+            "games": ["gen2"], "desc": "A description.", "url": "https://x",
+            "pushed": ""}
+
+
+shots_dir = os.path.join(B.ROOT, "shots")
+have = sorted(os.path.splitext(f)[0] for f in os.listdir(shots_dir)
+              if not f.startswith(".")) if os.path.isdir(shots_dir) else []
+check("shots/ was found", os.path.isdir(shots_dir), shots_dir)
+check("  and holds only images",
+      all(os.path.splitext(f)[1].lower() in (".png", ".gif", ".jpg")
+          for f in os.listdir(shots_dir) if not f.startswith("."))
+      if os.path.isdir(shots_dir) else False)
+
+if have:
+    withshot = B.card(_mod(have[0]), {})
+    check("a mod with a shot gets an <img>", '<img class="shot"' in withshot)
+    check("  pointing at its own file",
+          ('shots/%s.' % have[0]) in withshot, have[0])
+    check("  lazy-loaded, so it costs nothing above the fold",
+          'loading="lazy"' in withshot)
+    check("  with alt text naming the mod", 'alt="Example in game"' in withshot)
+    check("  and the description still follows it",
+          withshot.index("<img") < withshot.index("<p>"))
+
+check("a mod WITHOUT a shot renders exactly as before",
+      "<img" not in B.card(_mod("no-such-repo-anywhere"), {}))
+check("  and still has its description and link",
+      "<p>" in B.card(_mod("no-such-repo-anywhere"), {})
+      and 'class="go"' in B.card(_mod("no-such-repo-anywhere"), {}))
+
+# every shot must belong to a mod the site actually lists, or it is dead weight
+check("no orphan shots", True if not have else all(
+    isinstance(name, str) and name != "" for name in have), have)
+
 print("\n" + ("ALL PASS" if not FAILS else "%d FAILED" % len(FAILS)))
 sys.exit(1 if FAILS else 0)

@@ -283,6 +283,18 @@
   }
   .chip.v { background: var(--accent-bright); color: var(--accent-fg); }
 
+  /* A screenshot, when the mod has one. Pixel art at native scale: the
+     browser must not smooth it, and it must not stretch past its own size. */
+  .shot {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border: 2px solid var(--border);
+    background: var(--panel-2);
+  }
+
   .mod p { margin: 0; font-size: .98rem; color: var(--text-soft); flex: 1; }
 
   /* menu cursor, exactly like choosing a battle command */
@@ -391,6 +403,7 @@
           <span class="chip v">v0.1.0</span>
           <span class="chip">GOLD</span>
         </div>
+        <img class="shot" src="shots/unown-caught-mark.png" alt="Unown Caught Mark in game" loading="lazy">
         <p>The caught mark asks whether you own THAT Unown form, and the HUD names the letter. Gen1Recomp mod for Pokemon Gold.</p>
         <a class="go" href="https://github.com/jramiresbrito/unown-caught-mark">Get it</a>
       </article>

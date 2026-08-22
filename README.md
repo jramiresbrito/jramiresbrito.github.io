@@ -14,6 +14,16 @@ games read from the mod's own `manifest.json`.
 
 Want it live immediately? Actions -> **Refresh mod list** -> Run workflow.
 
+## Adding a picture to a card
+
+Drop an image at `shots/<repo-name>.png` — for example
+`shots/unown-caught-mark.png`. That is the whole procedure: the card picks it
+up on the next build, and a mod with no shot renders exactly as before.
+
+`.gif` and `.jpg` work too. Keep them small and at their native pixel size;
+the card draws them with `image-rendering: pixelated`, so a screenshot taken
+straight from the game stays crisp instead of being smoothed.
+
 ## What decides whether a mod is listed
 
 `scripts/build_index.py`, in `wanted()`:

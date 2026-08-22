@@ -120,6 +120,23 @@ def collect(token=None):
     return mods
 
 
+SHOTS_DIR = "shots"
+
+
+def shot_for(repo):
+    """A screenshot for this mod, if one has been dropped into shots/.
+
+    Named after the REPO, so adding a picture is copying a file in -- no
+    entry in copy.json and no change to this script. A mod with no shot
+    renders exactly as it did before.
+    """
+    for ext in ("png", "gif", "jpg"):
+        rel = "%s/%s.%s" % (SHOTS_DIR, repo, ext)
+        if os.path.exists(os.path.join(ROOT, rel)):
+            return rel
+    return None
+
+
 def card(mod, copy):
     over = copy.get(mod["repo"], {})
     title = over.get("name") or mod["name"]
@@ -143,14 +160,23 @@ def card(mod, copy):
     for extra in over.get("chips", []):
         chips.append('<span class="chip">%s</span>' % html.escape(extra))
 
+    shot = shot_for(mod["repo"])
+    picture = ""
+    if shot:
+        picture = ('        <img class="shot" src="%s" alt="%s in game"'
+                   ' loading="lazy">\n') % (html.escape(shot),
+                                            html.escape(title))
+
     return (
         '      <article class="mod">\n'
         '        <h3>%s</h3>\n'
         '        <div class="chips">\n          %s\n        </div>\n'
+        '%s'
         '        <p>%s</p>\n'
         '        <a class="go" href="%s">Get it</a>\n'
         '      </article>\n'
-    ) % (html.escape(title), "\n          ".join(chips), blurb, html.escape(mod["url"]))
+    ) % (html.escape(title), "\n          ".join(chips), picture, blurb,
+         html.escape(mod["url"]))
 
 
 def main():
