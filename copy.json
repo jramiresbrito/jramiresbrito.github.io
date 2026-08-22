@@ -1,0 +1,21 @@
+{
+  "_comment": "Optional per-repo polish. A mod with no entry here still appears, using its GitHub description. Add an entry only when the card deserves better words than a one-line description.",
+
+  "mobile-pc": {
+    "name": "Mobile PC",
+    "blurb": "The storage PC, from anywhere. Adds <strong>PC</strong> at the very top of the START menu so you can move Pok&eacute;mon without walking back to a Centre. No configuration &mdash; enable it and the entry is there."
+  },
+  "one-exp-line": {
+    "name": "One EXP Line",
+    "blurb": "One EXP box for the whole party instead of one per Pok&eacute;mon. With EXP Share on, a single battle used to cost six message boxes. Now it costs one."
+  },
+  "1tb-agenda": {
+    "name": "1TB Agenda",
+    "blurb": "A phone book that never fills. Gold caps the Pok&eacute;Gear at ten contacts, so every new number pushes out a trainer you wanted to rematch. This lifts the cap to every contact the game can hold."
+  },
+  "Gen2-3D-Sprites": {
+    "name": "Gen2 3D Sprites Plus",
+    "chips": ["FORK"],
+    "blurb": "A 3D voxel overworld with Stadium 2 models, and the bugs fixed &mdash; the PC box picker, the POK&eacute;GEAR map, dead encounters after the START menu, plus model size and walk-motion controls."
+  }
+}

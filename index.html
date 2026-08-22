@@ -1,0 +1,471 @@
+<title>New Bark Mods</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+
+<style>
+  /* ------------------------------------------------------------------
+     Palettes. The page commits to one visual world at a time and the
+     reader picks which, so the host's light/dark stamp is deliberately
+     not consulted: LIGHT is always the default, and DEX is the dark one
+     for anyone who wants it. Every colour is painted from a token, so
+     the page holds on either host ground.
+     ------------------------------------------------------------------ */
+
+  /* LIGHT - Pokemon Red & Blue, 1996. The default. */
+  :root {
+    --accent:        #c82828;
+    --accent-bright: #c82828;
+    --accent-fg:     #ffffff;
+    --screen:        #eef2f7;
+    --panel:         #ffffff;
+    --panel-2:       #e6eef6;
+    --casing:        #2050b0;
+    --wip-bg:        #2050b0;
+    --wip-fg:        #ffffff;
+    --text:          #111827;
+    --text-soft:     #4b5563;
+    --border:        #1a1a1a;
+    --shadow:        #1a1a1a;
+    --grid:          rgba(26, 26, 26, .05);
+
+    --f-display: 'Press Start 2P', 'Courier New', monospace;
+    --f-body:    'Pixelify Sans', 'Trebuchet MS', sans-serif;
+    --f-mono:    'Space Mono', 'Courier New', monospace;
+
+    --edge: 3px;
+    --pop:  5px;
+  }
+
+  /* GOLD - the Dandelion cartridge */
+  :root[data-palette="gold"] {
+    --accent:        #b8860b;
+    --accent-bright: #d4a017;
+    --accent-fg:     #14120c;
+    --screen:        #f7f3e3;
+    --panel:         #fffdf2;
+    --panel-2:       #efe9d2;
+    --casing:        #5c5470;
+    --wip-bg:        #5c5470;
+    --wip-fg:        #fffdf2;
+    --text:          #14120c;
+    --text-soft:     #55503f;
+    --border:        #14120c;
+    --shadow:        #14120c;
+    --grid:          rgba(20, 18, 12, .045);
+  }
+
+  /* DMG - the green brick */
+  :root[data-palette="dmg"] {
+    --accent:        #0f380f;
+    --accent-bright: #306230;
+    --accent-fg:     #9bbc0f;
+    --screen:        #8bac0f;
+    --panel:         #9bbc0f;
+    --panel-2:       #7d9c0d;
+    --casing:        #306230;
+    --wip-bg:        #0f380f;
+    --wip-fg:        #9bbc0f;
+    --text:          #0f380f;
+    --text-soft:     #224822;
+    --border:        #0f380f;
+    --shadow:        #0f380f;
+    --grid:          rgba(15, 56, 15, .10);
+  }
+
+  /* GBC - Game Boy Color, Gold & Silver */
+  :root[data-palette="gbc"] {
+    --accent:        #b45309;
+    --accent-bright: #d8a010;
+    --accent-fg:     #1e1b4b;
+    --screen:        #f1f5f9;
+    --panel:         #ffffff;
+    --panel-2:       #fef08a;
+    --casing:        #483888;
+    --wip-bg:        #483888;
+    --wip-fg:        #ffffff;
+    --text:          #1e1b4b;
+    --text-soft:     #4b5563;
+    --border:        #1e1b4b;
+    --shadow:        #1e1b4b;
+    --grid:          rgba(30, 27, 75, .05);
+  }
+
+  /* DEX - Professor Oak's Pokedex, the dark one */
+  :root[data-palette="dex"] {
+    --accent:        #38bdf8;
+    --accent-bright: #38bdf8;
+    --accent-fg:     #020617;
+    --screen:        #0f172a;
+    --panel:         #1e293b;
+    --panel-2:       #334155;
+    --casing:        #b91c1c;
+    --wip-bg:        #b91c1c;
+    --wip-fg:        #fef2f2;
+    --text:          #f8fafc;
+    --text-soft:     #94a3b8;
+    --border:        #020617;
+    --shadow:        #020617;
+    --grid:          rgba(248, 250, 252, .045);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background-color: var(--screen);
+    /* a faint 4px pixel grid, the way a GB screen sits under a loupe */
+    background-image:
+      repeating-linear-gradient(0deg,  var(--grid) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 4px);
+    color: var(--text);
+    font-family: var(--f-body);
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: none;
+  }
+
+  .wrap {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: clamp(20px, 5vw, 52px) clamp(16px, 4vw, 28px) 72px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(28px, 5vw, 46px);
+  }
+
+  /* ---- the dialogue box: every block on this page is one ---- */
+  .box {
+    background: var(--panel);
+    border: var(--edge) solid var(--border);
+    box-shadow: var(--pop) var(--pop) 0 var(--shadow);
+    padding: clamp(18px, 3.4vw, 28px);
+  }
+
+  /* ---------- masthead ---------- */
+  .hero { display: flex; flex-direction: column; gap: 18px; }
+
+  .cart {
+    font-family: var(--f-display);
+    font-size: clamp(15px, 4.1vw, 30px);
+    line-height: 1.42;
+    margin: 0;
+    color: var(--text);
+    text-wrap: balance;
+    text-shadow: 3px 3px 0 var(--accent-bright);
+  }
+
+  .tag { margin: 0; max-width: 62ch; font-size: 1.06rem; color: var(--text-soft); }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
+  .stat {
+    font-family: var(--f-mono);
+    font-size: .74rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 5px 10px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- palette picker: five cartridges on a shelf ---------- */
+  .shelf {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    padding-top: 6px;
+  }
+  .shelf-label {
+    font-family: var(--f-mono);
+    font-size: .68rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-right: 2px;
+  }
+  .pal {
+    font-family: var(--f-mono);
+    font-weight: 700;
+    font-size: .7rem;
+    letter-spacing: .08em;
+    cursor: pointer;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 5px 9px;
+    transition: transform .08s steps(2);
+  }
+  .pal:hover { transform: translate(-1px, -1px); }
+  .pal[aria-pressed="true"] {
+    background: var(--accent-bright);
+    color: var(--accent-fg);
+    box-shadow: 3px 3px 0 var(--shadow);
+  }
+  .pal:focus-visible { outline: 3px solid var(--casing); outline-offset: 3px; }
+
+  /* ---------- section headings ---------- */
+  .eyebrow {
+    font-family: var(--f-display);
+    font-size: clamp(10px, 2.1vw, 13px);
+    letter-spacing: .04em;
+    color: var(--accent);
+    margin: 0 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::after {
+    content: "";
+    flex: 1; height: 3px;
+    background: repeating-linear-gradient(90deg, var(--border) 0 4px, transparent 4px 8px);
+  }
+
+  /* ---------- mod grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
+    gap: clamp(16px, 2.6vw, 24px);
+  }
+
+  .mod {
+    background: var(--panel);
+    border: var(--edge) solid var(--border);
+    box-shadow: var(--pop) var(--pop) 0 var(--shadow);
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: transform .08s steps(2), box-shadow .08s steps(2);
+  }
+  .mod:hover, .mod:focus-within {
+    transform: translate(-2px, -2px);
+    box-shadow: calc(var(--pop) + 2px) calc(var(--pop) + 2px) 0 var(--shadow);
+  }
+
+  .mod h3 {
+    font-family: var(--f-display);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--text);
+    text-wrap: balance;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-family: var(--f-mono);
+    font-size: .68rem;
+    letter-spacing: .05em;
+    border: 2px solid var(--border);
+    padding: 3px 7px;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    background: var(--panel-2);
+    color: var(--text);
+  }
+  .chip.v { background: var(--accent-bright); color: var(--accent-fg); }
+
+  .mod p { margin: 0; font-size: .98rem; color: var(--text-soft); flex: 1; }
+
+  /* menu cursor, exactly like choosing a battle command */
+  .go {
+    align-self: flex-start;
+    font-family: var(--f-body);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    color: var(--accent-fg);
+    background: var(--accent-bright);
+    border: 2px solid var(--border);
+    padding: 7px 14px 7px 12px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .go::before {
+    content: "\25B6";
+    font-size: .68em;
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: opacity .08s steps(2), transform .08s steps(2);
+  }
+  .go:hover::before, .go:focus-visible::before { opacity: 1; transform: translateX(0); }
+  .go:focus-visible { outline: 3px solid var(--casing); outline-offset: 3px; }
+
+  /* ---------- build log ---------- */
+  ul.log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  ul.log li {
+    display: flex; gap: 12px; align-items: baseline;
+    border-bottom: 2px dashed var(--panel-2);
+    padding-bottom: 12px;
+  }
+  ul.log li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .wip {
+    font-family: var(--f-mono);
+    font-size: .66rem;
+    letter-spacing: .06em;
+    background: var(--wip-bg);
+    color: var(--wip-fg);
+    border: 2px solid var(--border);
+    padding: 2px 7px;
+    text-transform: uppercase;
+    flex: none;
+  }
+
+  /* ---------- install ---------- */
+  ol.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 10px; }
+  ol.steps li { padding-left: 4px; }
+  code {
+    font-family: var(--f-mono);
+    font-size: .86em;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible { outline: 3px solid var(--casing); outline-offset: 2px; }
+
+  footer { font-size: .9rem; color: var(--text-soft); display: flex; flex-direction: column; gap: 8px; }
+  footer strong { color: var(--text); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="box hero">
+    <h1 class="cart">NEW BARK MODS</h1>
+    <p class="tag">
+      Four mods for <strong>Gen1Recomp</strong> &mdash; the quality-of-life fixes I wanted
+      while replaying Pok&eacute;mon Gold, built one annoyance at a time.
+      Every one ships as a <code>.zip</code> the launcher installs on its own.
+    </p>
+    <div class="stats">
+      <span class="stat" id="count">6 released</span>
+      <span class="stat">3 in progress</span>
+      <span class="stat">Gold &middot; Silver &middot; R/B/Y</span>
+    </div>
+    <div class="shelf" role="group" aria-label="Colour palette">
+      <span class="shelf-label" aria-hidden="true">Palette</span>
+      <button class="pal" data-pal="light" aria-pressed="true">LIGHT</button>
+      <button class="pal" data-pal="gold"  aria-pressed="false">GOLD</button>
+      <button class="pal" data-pal="dmg"  aria-pressed="false">DMG</button>
+      <button class="pal" data-pal="gbc"  aria-pressed="false">GBC</button>
+      <button class="pal" data-pal="dex"  aria-pressed="false">DEX</button>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="eyebrow">RELEASED</h2>
+    <div class="grid">
+      <!-- MODS:START - generated by scripts/build_index.py, do not edit by hand -->
+      <article class="mod">
+        <h3>Gen2 3D Sprites Plus</h3>
+        <div class="chips">
+          <span class="chip v">v1.2.0</span>
+          <span class="chip">GOLD</span>
+          <span class="chip">FORK</span>
+        </div>
+        <p>A 3D voxel overworld with Stadium 2 models, and the bugs fixed &mdash; the PC box picker, the POK&eacute;GEAR map, dead encounters after the START menu, plus model size and walk-motion controls.</p>
+        <a class="go" href="https://github.com/jramiresbrito/Gen2-3D-Sprites">Get it</a>
+      </article>
+      <article class="mod">
+        <h3>Sticky Zoom</h3>
+        <div class="chips">
+          <span class="chip v">v0.2.0</span>
+          <span class="chip">GOLD</span>
+        </div>
+        <p>Pokemon Gold remembers the zoom you left the world at. Gen1Recomp mod.</p>
+        <a class="go" href="https://github.com/jramiresbrito/sticky-zoom">Get it</a>
+      </article>
+      <article class="mod">
+        <h3>Useful Marts for Gold</h3>
+        <div class="chips">
+          <span class="chip v">v0.1.0</span>
+          <span class="chip">GOLD</span>
+        </div>
+        <p>Pokemon Gold shop rows that show what you already carry and what things sell for. Gen1Recomp mod.</p>
+        <a class="go" href="https://github.com/jramiresbrito/useful-marts-gold">Get it</a>
+      </article>
+      <article class="mod">
+        <h3>1TB Agenda</h3>
+        <div class="chips">
+          <span class="chip v">v0.1.0</span>
+          <span class="chip">GOLD</span>
+        </div>
+        <p>A phone book that never fills. Gold caps the Pok&eacute;Gear at ten contacts, so every new number pushes out a trainer you wanted to rematch. This lifts the cap to every contact the game can hold.</p>
+        <a class="go" href="https://github.com/jramiresbrito/1tb-agenda">Get it</a>
+      </article>
+      <article class="mod">
+        <h3>One EXP Line</h3>
+        <div class="chips">
+          <span class="chip v">v0.1.0</span>
+          <span class="chip">GOLD</span>
+        </div>
+        <p>One EXP box for the whole party instead of one per Pok&eacute;mon. With EXP Share on, a single battle used to cost six message boxes. Now it costs one.</p>
+        <a class="go" href="https://github.com/jramiresbrito/one-exp-line">Get it</a>
+      </article>
+      <article class="mod">
+        <h3>Mobile PC</h3>
+        <div class="chips">
+          <span class="chip v">v0.1.0</span>
+          <span class="chip">R/B/Y</span>
+          <span class="chip">GOLD</span>
+        </div>
+        <p>The storage PC, from anywhere. Adds <strong>PC</strong> at the very top of the START menu so you can move Pok&eacute;mon without walking back to a Centre. No configuration &mdash; enable it and the entry is there.</p>
+        <a class="go" href="https://github.com/jramiresbrito/mobile-pc">Get it</a>
+      </article>
+      <!-- MODS:END -->
+    </div>
+  </section>
+
+  <section class="box">
+    <h2 class="eyebrow">ON THE BENCH</h2>
+    <ul class="log">
+      <li><span class="wip">Building</span><span><strong>heal&#8209;me&#8209;fast</strong> &mdash; skip the nurse's speech. Ask for a heal, get a heal.</span></li>
+      <li><span class="wip">Building</span><span><strong>fast&#8209;swim</strong> &mdash; SURF straight from the water's edge, no party menu.</span></li>
+      <li><span class="wip">Building</span><span><strong>fast&#8209;cut</strong> &mdash; CUT straight from the tree prompt, no party menu.</span></li>
+    </ul>
+  </section>
+
+  <section class="box">
+    <h2 class="eyebrow">HOW TO INSTALL</h2>
+    <ol class="steps">
+      <li>Download the <code>.zip</code> from the mod's Releases page &mdash; take the file named for the mod, not the source archive.</li>
+      <li>In Gen1Recomp, open <code>MODS</code> and choose <code>Import mod .zip</code>. Dropping the file onto the launcher window works too.</li>
+      <li>Enable the mod, then start your game. Already installed? <code>MODS &rarr; Check for updates</code> finds new versions on its own.</li>
+    </ol>
+  </section>
+
+  <footer>
+    <div>Built by <a href="https://github.com/jramiresbrito">jramiresbrito</a>.
+      Not affiliated with Nintendo, Game Freak or The Pok&eacute;mon Company.</div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var KEY = "nbm-palette";
+    var root = document.documentElement;
+    var buttons = Array.prototype.slice.call(document.querySelectorAll(".pal"));
+
+    function apply(name, remember) {
+      // LIGHT is the default and carries no attribute, so a page that never
+      // loads this script still renders the intended palette.
+      if (name === "light") { root.removeAttribute("data-palette"); }
+      else { root.setAttribute("data-palette", name); }
+      buttons.forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.dataset.pal === name));
+      });
+      if (remember) { try { localStorage.setItem(KEY, name); } catch (e) {} }
+    }
+
+    buttons.forEach(function (b) {
+      b.addEventListener("click", function () { apply(b.dataset.pal, true); });
+    });
+
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    if (saved && buttons.some(function (b) { return b.dataset.pal === saved; })) {
+      apply(saved, false);
+    }
+  })();
+</script>

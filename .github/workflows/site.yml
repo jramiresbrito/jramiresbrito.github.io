@@ -1,0 +1,44 @@
+name: Refresh mod list
+
+# The site rebuilds itself so publishing a mod is the only step. A new mod
+# appears on the next scheduled run; dispatch manually if you want it now.
+on:
+  schedule:
+    - cron: "17 */6 * * *"     # every six hours
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: new-bark-mods-site
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prove the discovery rule still holds
+        run: python3 scripts/test_build.py
+
+      - name: Rebuild the cards from the repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/build_index.py
+
+      - name: Commit only if something actually changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- index.html; then
+            echo "No mod changes."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Refresh mod list"
+          git push
