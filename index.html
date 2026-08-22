@@ -170,6 +170,9 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* the one earned chip, so it does not read as another count */
+  .stat-mark { background: var(--accent-bright); color: var(--accent-fg); }
+
   /* ---------- palette picker: five cartridges on a shelf ---------- */
   .shelf {
     display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
@@ -320,6 +323,10 @@
   }
 
   a { color: var(--accent); }
+  /* the engine link sits inside muted body copy, so it needs its own
+     weight to read as a link rather than as emphasis */
+  .tag a, .steps a { color: var(--accent); text-decoration: underline;
+                     text-underline-offset: 3px; }
   a:focus-visible { outline: 3px solid var(--casing); outline-offset: 2px; }
 
   footer { font-size: .9rem; color: var(--text-soft); display: flex; flex-direction: column; gap: 8px; }
@@ -333,14 +340,22 @@
   <header class="box hero">
     <h1 class="cart">NEW BARK MODS</h1>
     <p class="tag">
-      Four mods for <strong>Gen1Recomp</strong> &mdash; the quality-of-life fixes I wanted
-      while replaying Pok&eacute;mon Gold, built one annoyance at a time.
-      Every one ships as a <code>.zip</code> the launcher installs on its own.
+      Quality-of-life mods for <strong><a href="https://github.com/bryanthaboi/gen1recomp">Gen1Recomp</a></strong>, built one
+      annoyance at a time while replaying Pok&eacute;mon Gold. Each ships as a
+      <code>.zip</code> the launcher installs and updates on its own.
+    </p>
+    <p class="tag">
+      Some of the fixes go further upstream: I contribute to the engine itself,
+      and
+      <a href="https://github.com/bryanthaboi/gen1recomp/pull/1660">PR&nbsp;#1660</a>
+      shipped in <a href="https://github.com/bryanthaboi/gen1recomp/releases/tag/v0.2.19">v0.2.19</a>
+      &mdash; the seam that lets a mod tell one EXP message from six.
     </p>
     <div class="stats">
       <span class="stat" id="count">7 released</span>
       <span class="stat">1 in progress</span>
       <span class="stat">Gold &middot; Silver &middot; R/B/Y</span>
+      <span class="stat stat-mark">Engine contributor</span>
     </div>
     <div class="shelf" role="group" aria-label="Colour palette">
       <span class="shelf-label" aria-hidden="true">Palette</span>
@@ -436,7 +451,7 @@
     <h2 class="eyebrow">HOW TO INSTALL</h2>
     <ol class="steps">
       <li>Download the <code>.zip</code> from the mod's Releases page &mdash; take the file named for the mod, not the source archive.</li>
-      <li>In Gen1Recomp, open <code>MODS</code> and choose <code>Import mod .zip</code>. Dropping the file onto the launcher window works too.</li>
+      <li>In <a href="https://github.com/bryanthaboi/gen1recomp">Gen1Recomp</a>, open <code>MODS</code> and choose <code>Import mod .zip</code>. Dropping the file onto the launcher window works too.</li>
       <li>Enable the mod, then start your game. Already installed? <code>MODS &rarr; Check for updates</code> finds new versions on its own.</li>
     </ol>
   </section>
