@@ -1,6 +1,5 @@
 {
   "_comment": "Optional per-repo polish. A mod with no entry here still appears, using its GitHub description. Add an entry only when the card deserves better words than a one-line description.",
-
   "mobile-pc": {
     "name": "Mobile PC",
     "blurb": "The storage PC, from anywhere. Adds <strong>PC</strong> at the very top of the START menu so you can move Pok&eacute;mon without walking back to a Centre. No configuration &mdash; enable it and the entry is there."
@@ -15,7 +14,13 @@
   },
   "Gen2-3D-Sprites": {
     "name": "Gen2 3D Sprites Plus",
-    "chips": ["FORK"],
+    "chips": [
+      "FORK"
+    ],
     "blurb": "A 3D voxel overworld with Stadium 2 models, and the bugs fixed &mdash; the PC box picker, the POK&eacute;GEAR map, dead encounters after the START menu, plus model size and walk-motion controls."
+  },
+  "kurt-bulk-apricorns": {
+    "name": "Kurt Bulk Apricorns",
+    "blurb": "Hand Kurt every apricorn you are carrying and collect every ball at once. Pick a colour and he takes all of that colour, then asks whether he should take the rest of your bag too &mdash; and says what he took and what he made, which the cart never does. <strong>NO WAITING</strong> skips the day, touching Kurt&rsquo;s flag and no other daily event."
   }
 }
