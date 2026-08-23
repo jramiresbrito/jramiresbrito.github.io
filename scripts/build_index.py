@@ -121,6 +121,7 @@ def collect(token=None):
 
 
 SHOTS_DIR = "shots"
+CLIPS_DIR = "clips"
 
 
 def shot_for(repo):
@@ -134,6 +135,19 @@ def shot_for(repo):
         rel = "%s/%s.%s" % (SHOTS_DIR, repo, ext)
         if os.path.exists(os.path.join(ROOT, rel)):
             return rel
+    return None
+
+
+def clip_for(repo):
+    """The full recording a shot was cut from, if one is in clips/.
+
+    Same convention as shots/: named after the repo, no entry anywhere. The
+    card still shows the short GIF -- this is what opens when it is clicked,
+    so the page never pays for the video unless somebody asks to see it.
+    """
+    rel = "%s/%s.mp4" % (CLIPS_DIR, repo)
+    if os.path.exists(os.path.join(ROOT, rel)):
+        return rel
     return None
 
 
@@ -163,9 +177,18 @@ def card(mod, copy):
     shot = shot_for(mod["repo"])
     picture = ""
     if shot:
-        picture = ('        <img class="shot" src="%s" alt="%s in game"'
-                   ' loading="lazy">\n') % (html.escape(shot),
-                                            html.escape(title))
+        # A button rather than a link: it opens an overlay on this page, so
+        # there is no URL to go to and a keyboard gets it for free.
+        clip = clip_for(mod["repo"])
+        source = ' data-clip="%s"' % html.escape(clip) if clip else ""
+        picture = (
+            '        <button class="shot-open" type="button"%s'
+            ' data-full="%s" data-title="%s">\n'
+            '          <img class="shot" src="%s" alt="%s in game"'
+            ' loading="lazy">\n'
+            '        </button>\n'
+        ) % (source, html.escape(shot), html.escape(title),
+             html.escape(shot), html.escape(title))
 
     return (
         '      <article class="mod">\n'

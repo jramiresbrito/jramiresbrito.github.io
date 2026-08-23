@@ -6,6 +6,7 @@ writer against fabricated repositories, including the three mods that do not
 exist yet.
 """
 import json
+import io
 import os
 import sys
 
@@ -142,6 +143,61 @@ check("a mod WITHOUT a shot renders exactly as before",
 check("  and still has its description and link",
       "<p>" in B.card(_mod("no-such-repo-anywhere"), {})
       and 'class="go"' in B.card(_mod("no-such-repo-anywhere"), {}))
+
+# ---- the shot opens full size ---------------------------------------------
+#
+# The card's picture is a thumbnail cut from a longer recording. It is wrapped
+# in a button so it can open that recording over the page.
+print("-- the full-size viewer")
+
+if have:
+    withshot = B.card(_mod(have[0]), {})
+    check("the shot is wrapped in a button", '<button class="shot-open"' in withshot)
+    check("  typed, so it never submits anything", 'type="button"' in withshot)
+    check("  carrying the full-size source", 'data-full="shots/' in withshot)
+    check("  and the mod's name for the caption",
+          'data-title="Example"' in withshot)
+    check("  the <img> is still inside it",
+          withshot.index("<button") < withshot.index("<img")
+          < withshot.index("</button>"))
+
+# A clip is optional, exactly like a shot: clips/<repo>.mp4 or nothing.
+clips_dir = os.path.join(B.ROOT, "clips")
+clips = sorted(os.path.splitext(f)[0] for f in os.listdir(clips_dir)
+               if f.endswith(".mp4")) if os.path.isdir(clips_dir) else []
+check("clips/ holds only mp4s",
+      all(f.endswith(".mp4") or f.startswith(".")
+          for f in os.listdir(clips_dir)) if os.path.isdir(clips_dir) else True)
+
+if clips:
+    withclip = B.card(_mod(clips[0]), {})
+    check("a mod with a clip points the viewer at the mp4",
+          ('data-clip="clips/%s.mp4"' % clips[0]) in withclip, clips[0])
+    check("  and still shows the small shot in the card",
+          '<img class="shot"' in withclip)
+
+noclip = B.card(_mod("no-such-mod-anywhere"), {})
+check("a mod without a clip carries no data-clip", "data-clip" not in noclip)
+
+# A clip with no shot would never be reachable: the button IS the shot.
+check("every clip has a shot to open it",
+      all(c in have for c in clips), [c for c in clips if c not in have])
+
+# ---- masonry ---------------------------------------------------------------
+#
+# A grid row is as tall as its tallest card, which padded every neighbour of a
+# card that had a shot. Columns pack by height instead.
+print("-- masonry")
+page_css = io.open(os.path.join(B.ROOT, "index.html"), encoding="utf-8").read()
+check("the card list packs in columns, not grid rows",
+      "column-width:" in page_css)
+check("  and no card is split across a column break",
+      "break-inside: avoid" in page_css)
+check("  the old stretching grid rule is gone",
+      "grid-template-columns: repeat(auto-fit, minmax(268px, 1fr))"
+      not in page_css)
+check("the viewer can be closed with the keyboard",
+      'ev.key === "Escape"' in page_css)
 
 # every shot must belong to a mod the site actually lists, or it is dead weight
 check("no orphan shots", True if not have else all(

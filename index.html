@@ -241,10 +241,24 @@
   }
 
   /* ---------- mod grid ---------- */
+  /* Masonry, by way of multi-column.
+     A grid row is as tall as its tallest card, so one mod with a shot and a
+     long blurb left a column of blank panel inside every neighbour. Columns
+     pack by height instead: each card is exactly as tall as its contents and
+     the next one starts right under it. `column-width` keeps the same
+     auto-fitting behaviour the grid had -- the browser picks the count.
+     The trade is reading order: cards run DOWN a column, not across a row. */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
-    gap: clamp(16px, 2.6vw, 24px);
+    column-width: 300px;
+    column-gap: clamp(16px, 2.6vw, 24px);
+  }
+  .grid > .mod {
+    /* A card must never be split across a column break. Chrome honours this
+       unreliably on a FLEX container, which is why .mod below is a block. */
+    break-inside: avoid;
+    page-break-inside: avoid;
+    /* column-gap has no row half, so the vertical rhythm lives here */
+    margin: 0 0 clamp(16px, 2.6vw, 24px);
   }
 
   .mod {
@@ -252,13 +266,16 @@
     border: var(--edge) solid var(--border);
     box-shadow: var(--pop) var(--pop) 0 var(--shadow);
     padding: 20px;
-    display: flex; flex-direction: column; gap: 12px;
+    /* block, not flex: see the note on .grid > .mod */
+    display: block;
     transition: transform .08s steps(2), box-shadow .08s steps(2);
   }
   .mod:hover, .mod:focus-within {
     transform: translate(-2px, -2px);
     box-shadow: calc(var(--pop) + 2px) calc(var(--pop) + 2px) 0 var(--shadow);
   }
+
+  .mod > * + * { margin-top: 12px; }
 
   .mod h3 {
     font-family: var(--f-display);
@@ -295,11 +312,101 @@
     background: var(--panel-2);
   }
 
-  .mod p { margin: 0; font-size: .98rem; color: var(--text-soft); flex: 1; }
+  /* The shot opens full size, so it is a button. It must not look like one:
+     no chrome of its own, just the picture and a cursor that says "click". */
+  .shot-open {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+    position: relative;
+  }
+  .shot-open:focus-visible { outline: 3px solid var(--casing); outline-offset: 3px; }
+  .shot-open::after {
+    content: "\2922";           /* the resize arrow, as a hint */
+    position: absolute;
+    right: 8px; bottom: 8px;
+    font-size: .85rem;
+    line-height: 1;
+    padding: 4px 6px;
+    color: #fff;
+    background: rgba(0, 0, 0, .62);
+    border: 2px solid rgba(255, 255, 255, .5);
+    opacity: 0;
+    transition: opacity .12s steps(2);
+  }
+  .shot-open:hover::after, .shot-open:focus-visible::after { opacity: 1; }
+
+  .mod p { margin: 0; font-size: .98rem; color: var(--text-soft); }
+
+  /* ---- the full-size viewer ---------------------------------------------
+     One overlay for the whole page, filled in on click. It holds a <video>
+     when the mod has a clip in clips/ and the GIF otherwise, so the page
+     never downloads a recording nobody asked to watch. */
+  .viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(12px, 3vw, 32px);
+    background: rgba(12, 14, 20, .88);
+  }
+  .viewer.on { display: flex; }
+  .viewer-inner {
+    background: var(--panel);
+    border: var(--edge) solid var(--border);
+    box-shadow: var(--pop) var(--pop) 0 var(--shadow);
+    padding: 12px;
+    max-width: min(1100px, 100%);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .viewer-inner > :is(img, video) {
+    display: block;
+    max-width: 100%;
+    /* room for the caption row under it */
+    max-height: calc(100vh - 160px);
+    width: auto;
+    margin: 0 auto;
+    image-rendering: pixelated;
+    background: var(--panel-2);
+    border: 2px solid var(--border);
+  }
+  .viewer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+  }
+  .viewer-title {
+    font-family: var(--f-display);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .viewer-close {
+    font-family: var(--f-mono);
+    font-size: .72rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    border: 2px solid var(--border);
+    background: var(--accent-bright);
+    color: var(--accent-fg);
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .viewer-close:focus-visible { outline: 3px solid var(--casing); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shot-open::after { transition: none; }
+  }
 
   /* menu cursor, exactly like choosing a battle command */
   .go {
-    align-self: flex-start;
     font-family: var(--f-body);
     font-weight: 600;
     font-size: 1rem;
@@ -403,7 +510,9 @@
           <span class="chip v">v0.1.0</span>
           <span class="chip">GOLD</span>
         </div>
-        <img class="shot" src="shots/kurt-bulk-apricorns.gif" alt="Kurt Bulk Apricorns in game" loading="lazy">
+        <button class="shot-open" type="button" data-clip="clips/kurt-bulk-apricorns.mp4" data-full="shots/kurt-bulk-apricorns.gif" data-title="Kurt Bulk Apricorns">
+          <img class="shot" src="shots/kurt-bulk-apricorns.gif" alt="Kurt Bulk Apricorns in game" loading="lazy">
+        </button>
         <p>Hand Kurt every apricorn you are carrying and collect every ball at once. Pick a colour and he takes all of that colour, then asks whether he should take the rest of your bag too &mdash; and says what he took and what he made, which the cart never does. <strong>NO WAITING</strong> skips the day, touching Kurt&rsquo;s flag and no other daily event.</p>
         <a class="go" href="https://github.com/jramiresbrito/kurt-bulk-apricorns">Get it</a>
       </article>
@@ -413,6 +522,9 @@
           <span class="chip v">v0.1.1</span>
           <span class="chip">GOLD</span>
         </div>
+        <button class="shot-open" type="button" data-clip="clips/auto-field-moves.mp4" data-full="shots/auto-field-moves.gif" data-title="Auto Field Moves">
+          <img class="shot" src="shots/auto-field-moves.gif" alt="Auto Field Moves in game" loading="lazy">
+        </button>
         <p>Use CUT, SURF, FLY and every field move without spending a move slot. FLASH offers itself in dark caves. Gen1Recomp mod for Pokemon Gold.</p>
         <a class="go" href="https://github.com/jramiresbrito/auto-field-moves">Get it</a>
       </article>
@@ -422,6 +534,9 @@
           <span class="chip v">v0.1.0</span>
           <span class="chip">GOLD</span>
         </div>
+        <button class="shot-open" type="button" data-clip="clips/heal-me-fast.mp4" data-full="shots/heal-me-fast.gif" data-title="Heal Me Fast">
+          <img class="shot" src="shots/heal-me-fast.gif" alt="Heal Me Fast in game" loading="lazy">
+        </button>
         <p>Say yes to the nurse and your Pokemon are healed. Six boxes of small talk become one question. Gen1Recomp mod for Pokemon Gold.</p>
         <a class="go" href="https://github.com/jramiresbrito/heal-me-fast">Get it</a>
       </article>
@@ -440,7 +555,9 @@
           <span class="chip v">v0.1.0</span>
           <span class="chip">GOLD</span>
         </div>
-        <img class="shot" src="shots/unown-caught-mark.png" alt="Unown Caught Mark in game" loading="lazy">
+        <button class="shot-open" type="button" data-full="shots/unown-caught-mark.png" data-title="Unown Caught Mark">
+          <img class="shot" src="shots/unown-caught-mark.png" alt="Unown Caught Mark in game" loading="lazy">
+        </button>
         <p>The caught mark asks whether you own THAT Unown form, and the HUD names the letter. Gen1Recomp mod for Pokemon Gold.</p>
         <a class="go" href="https://github.com/jramiresbrito/unown-caught-mark">Get it</a>
       </article>
@@ -520,6 +637,19 @@
 
 </div>
 
+<!-- Filled in on click. Empty until then, so nothing here is downloaded by a
+     visitor who never opens a shot. -->
+<div class="viewer" id="viewer" role="dialog" aria-modal="true"
+     aria-labelledby="viewer-title" hidden>
+  <div class="viewer-inner">
+    <div class="viewer-stage"></div>
+    <div class="viewer-bar">
+      <span class="viewer-title" id="viewer-title"></span>
+      <button class="viewer-close" type="button">Close &times;</button>
+    </div>
+  </div>
+</div>
+
 <script>
   (function () {
     var KEY = "nbm-palette";
@@ -546,5 +676,70 @@
     if (saved && buttons.some(function (b) { return b.dataset.pal === saved; })) {
       apply(saved, false);
     }
+  })();
+
+  // ---- the full-size viewer ----------------------------------------------
+  //
+  // A card's shot is a thumbnail cut from a longer recording. Clicking it
+  // opens that recording centred over the page -- the mp4 in clips/ when the
+  // mod has one, the GIF itself otherwise. The stage is emptied on close, so
+  // a closed viewer is not still decoding a video behind the page.
+  (function () {
+    var viewer = document.getElementById("viewer");
+    if (!viewer) { return; }
+    var stage = viewer.querySelector(".viewer-stage");
+    var label = viewer.querySelector(".viewer-title");
+    var closer = viewer.querySelector(".viewer-close");
+    var lastFocus = null;
+
+    function close() {
+      viewer.classList.remove("on");
+      viewer.hidden = true;
+      stage.innerHTML = "";
+      if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
+      lastFocus = null;
+    }
+
+    function open(button) {
+      var clip = button.getAttribute("data-clip");
+      var full = button.getAttribute("data-full");
+      var title = button.getAttribute("data-title") || "";
+      var node;
+      if (clip) {
+        node = document.createElement("video");
+        node.src = clip;
+        node.controls = true;
+        node.autoplay = true;
+        node.loop = true;
+        node.muted = true;
+        // iOS refuses to autoplay inline without this
+        node.setAttribute("playsinline", "");
+      } else {
+        node = document.createElement("img");
+        node.src = full;
+        node.alt = title + " in game";
+      }
+      stage.innerHTML = "";
+      stage.appendChild(node);
+      label.textContent = title;
+      lastFocus = button;
+      viewer.hidden = false;
+      viewer.classList.add("on");
+      closer.focus();
+    }
+
+    // Delegated: the cards are rebuilt by scripts/build_index.py, so nothing
+    // here has to be rebound when the list changes.
+    document.addEventListener("click", function (ev) {
+      var button = ev.target.closest ? ev.target.closest(".shot-open") : null;
+      if (button) { open(button); return; }
+      // the backdrop closes; a click inside the panel does not
+      if (!viewer.hidden && ev.target === viewer) { close(); }
+    });
+
+    closer.addEventListener("click", close);
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && !viewer.hidden) { close(); }
+    });
   })();
 </script>
