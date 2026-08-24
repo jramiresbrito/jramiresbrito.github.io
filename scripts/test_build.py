@@ -190,12 +190,28 @@ check("every clip has a shot to open it",
 print("-- masonry")
 page_css = io.open(os.path.join(B.ROOT, "index.html"), encoding="utf-8").read()
 check("the card list packs in columns, not grid rows",
-      "column-width:" in page_css)
+      "column-count:" in page_css)
+check("  three of them on a desktop",
+      "@media (min-width: 1040px) { .grid { column-count: 3; } }" in page_css)
+check("  two on a tablet",
+      "@media (min-width: 660px)  { .grid { column-count: 2; } }" in page_css)
 check("  and no card is split across a column break",
       "break-inside: avoid" in page_css)
 check("  the old stretching grid rule is gone",
       "grid-template-columns: repeat(auto-fit, minmax(268px, 1fr))"
       not in page_css)
+# The clip is appended into .viewer-stage, so a child combinator off
+# .viewer-inner matches nothing and the video keeps its intrinsic width --
+# which is exactly how it hung off the right edge of a phone.
+check("the viewer sizes the media by DESCENDANT, not child",
+      ".viewer-stage :is(img, video)" in page_css)
+check("  .viewer-inner > :is(img, video) is gone",
+      ".viewer-inner > :is(img, video)" not in page_css)
+check("  and the panel may shrink under its contents",
+      "min-width: 0" in page_css)
+check("the viewer has a small-screen rule",
+      "@media (max-width: 640px)" in page_css)
+
 check("the viewer can be closed with the keyboard",
       'ev.key === "Escape"' in page_css)
 

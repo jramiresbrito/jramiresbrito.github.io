@@ -249,9 +249,14 @@
      auto-fitting behaviour the grid had -- the browser picks the count.
      The trade is reading order: cards run DOWN a column, not across a row. */
   .grid {
-    column-width: 300px;
+    /* one column, then two, then three -- see the breakpoints below.
+       A fixed count beats `column-width`: that let a wide screen decide on
+       four narrow columns and a tablet on two. */
+    column-count: 1;
     column-gap: clamp(16px, 2.6vw, 24px);
   }
+  @media (min-width: 660px)  { .grid { column-count: 2; } }
+  @media (min-width: 1040px) { .grid { column-count: 3; } }
   .grid > .mod {
     /* A card must never be split across a column break. Chrome honours this
        unreliably on a FLEX container, which is why .mod below is a block. */
@@ -270,6 +275,15 @@
     display: block;
     transition: transform .08s steps(2), box-shadow .08s steps(2);
   }
+  /* The colour rhythm. Three columns of identical white panels read as a
+     spreadsheet; a stripe that cycles every third card gives the wall a beat
+     without inventing a new colour -- all three are palette tokens, so this
+     follows LIGHT, GOLD, DMG, GBC and GBX on its own. */
+  .grid > .mod { border-top-width: 8px; }
+  .grid > .mod:nth-child(3n + 1) { border-top-color: var(--accent-bright); }
+  .grid > .mod:nth-child(3n + 2) { border-top-color: var(--casing); }
+  .grid > .mod:nth-child(3n + 3) { border-top-color: var(--border); }
+
   .mod:hover, .mod:focus-within {
     transform: translate(-2px, -2px);
     box-shadow: calc(var(--pop) + 2px) calc(var(--pop) + 2px) 0 var(--shadow);
@@ -363,16 +377,32 @@
     padding: 12px;
     max-width: min(1100px, 100%);
     max-height: 100%;
+    /* A flex item refuses to shrink below the intrinsic size of its contents
+       unless told it may. Without this the 960px-wide clip pushed the whole
+       panel off the right edge of a phone. */
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-  .viewer-inner > :is(img, video) {
+  .viewer-stage {
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+  /* A DESCENDANT selector, not a child one: the media is appended into
+     .viewer-stage, so `.viewer-inner > img` matched nothing and the clip
+     rendered at its full width. */
+  .viewer-stage :is(img, video) {
     display: block;
     max-width: 100%;
-    /* room for the caption row under it */
-    max-height: calc(100vh - 160px);
+    /* room for the caption row under it. dvh follows the phone's shrinking
+       toolbar; the vh line above it is the fallback. */
+    max-height: calc(100vh - 150px);
+    max-height: calc(100dvh - 150px);
     width: auto;
+    height: auto;
     margin: 0 auto;
     image-rendering: pixelated;
     background: var(--panel-2);
@@ -381,7 +411,10 @@
   .viewer-bar {
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px;
+    flex-wrap: wrap;
+    min-width: 0;
   }
+  .viewer-title { min-width: 0; overflow-wrap: anywhere; }
   .viewer-title {
     font-family: var(--f-display);
     font-size: 11px;
@@ -400,6 +433,23 @@
     cursor: pointer;
   }
   .viewer-close:focus-visible { outline: 3px solid var(--casing); outline-offset: 3px; }
+
+  /* On a narrow screen the panel's own chrome is most of the width, so it
+     gives most of it back. */
+  @media (max-width: 640px) {
+    .viewer { padding: 8px; }
+    .viewer-inner {
+      padding: 8px;
+      border-width: 2px;
+      box-shadow: 3px 3px 0 var(--shadow);
+      width: 100%;
+    }
+    .viewer-stage :is(img, video) {
+      max-height: calc(100vh - 130px);
+      max-height: calc(100dvh - 130px);
+    }
+    .viewer-title { font-size: 9px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .shot-open::after { transition: none; }
