@@ -27,8 +27,8 @@
     "name": "Infinite Haircuts",
     "blurb": "Goldenrod's Haircut Brothers cut hair once a day, then turn you away. This lifts the daily lock, so the underground Pok&eacute;mon SALON grooms as many Pok&eacute;mon as you like, back to back &mdash; the &yen;500 / &yen;300 fee and the happiness gain untouched. It touches the salon's one daily flag and no other daily event, the same discipline <strong>Kurt Bulk Apricorns</strong> uses on Kurt&rsquo;s."
   },
-  "rigged-game-corner": {
-    "name": "Rigged Game Corner",
-    "blurb": "Win every time at Goldenrod's Game Corner. The slots line up three 7s for the 300-coin jackpot on every spin, and Card Flip turns over a card that always matches the square you bet &mdash; both with the reels and cards honestly showing the win. You still pay to play; you just stop losing. Two toggles, one per game, both on by default."
+  "house-always-lose": {
+    "name": "House Always Lose",
+    "blurb": "At Goldenrod's Game Corner the house always loses. The slots line up three 7s for the 300-coin jackpot on every spin, and Card Flip turns over a card that always matches the square you bet &mdash; both with the reels and cards honestly showing the win. You still pay to play; you just stop losing. Two toggles, one per game, both on by default."
   }
 }
